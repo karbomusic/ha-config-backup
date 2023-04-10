@@ -29,3 +29,6 @@ scene: !include scenes.yaml
 #      track_new_devices: true
 #    interval_seconds: 8
 #    consider_home: 240
+ 
+shell_command:
+  pushupdates_to_github: /bin/bash pushupdates.sh
