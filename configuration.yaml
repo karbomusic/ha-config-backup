@@ -1,0 +1,31 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+#device_tracker:
+#  - platform: netgear
+#    host: 192.168.2.1
+#    port: 80
+#    username: admin
+#    password: Che$ter120120120
+#    accesspoints:
+#      - 94:A6:7E:77:D2:DB # Router
+#      - 94:A6:7E:76:40:9C # Satellite_Studio
+#      - 94:A6:7E:76:3E:E4 # Sattelite_2ndFloor
+#    devices:
+#      - 5E:F9:CF:66:46:F7 # kary phone
+#      - 0A:5D:DA:85:C8:27 # jenn phone
+#    new_device_defaults:
+#      track_new_devices: true
+#    interval_seconds: 8
+#    consider_home: 240

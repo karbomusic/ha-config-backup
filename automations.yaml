@@ -1,0 +1,57 @@
+- id: '1681088653338'
+  alias: My First Automation
+  description: Toggles front studio lights if still images is turned on/off on media
+    room camera.
+  trigger:
+  - platform: device
+    type: changed_states
+    device_id: 41972a7041c0c89c1c3dc56600bffd32
+    entity_id: switch.http_motionpi4_mediaroom_config_2_still_images
+    domain: switch
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    enabled: true
+  condition: []
+  action:
+  - type: toggle
+    device_id: 0b29ee9b13cb102d5180d84f7c5d6cf2
+    entity_id: light.studio_front_left
+    domain: light
+  - type: toggle
+    device_id: 089eea60e5cd55992b9630b5826e97d6
+    entity_id: light.studio_front_right
+    domain: light
+  mode: single
+- id: '1681103237763'
+  alias: Jennifer Weekday Wakeup
+  description: Bedroom lights come on dimly @ 2:30 AM
+  trigger:
+  - platform: time
+    at: 02:30:00
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 55909bcf92092e92af906cb9569db605
+    entity_id: light.mb_room_kary
+    domain: light
+    brightness_pct: 80
+  - type: turn_on
+    device_id: d98bf52e5929d96e7ebfe43422f79ceb
+    entity_id: light.mb_room_jenn
+    domain: light
+    brightness_pct: 80
+  mode: single
+- id: '1681112266135'
+  alias: Scheduled Backup
+  description: Backs up HA daily @ 5AM
+  trigger:
+  - platform: time
+    at: 05:00:00
+  condition: []
+  action:
+  - service: hassio.backup_full
+    data:
+      compressed: true
+  mode: single

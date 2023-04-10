@@ -1,0 +1,52 @@
+esphome:
+  name: esphome-web-3c401c
+  friendly_name: esp-media-motion2
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "sF7saIxPFmZn+N8hVEdBUMq85ikwt1EhpeoPuf/+l/o="
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-3C401C"
+    password: "wkbyCVkEQSdD"
+
+captive_portal:
+    
+# Pin that turns on the LED
+output:
+  - platform: gpio
+    id: "esp_media_motion_led"
+    pin: GPIO18
+    
+# Home Assistant domain for light
+light:
+  - platform: binary
+    output: "esp_media_motion_led"
+    name: "ESP Led"
+
+# Pin for temp sensor 
+dallas:
+  pin: GPIO5
+ 
+# Home Assistant domain for sensors
+sensor:
+  - platform: dallas
+    address: 0x4b80000027bdce28
+    name: "Studio Temperature"
+    unit_of_measurement: F
