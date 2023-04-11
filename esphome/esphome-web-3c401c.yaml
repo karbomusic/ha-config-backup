@@ -43,10 +43,18 @@ light:
 # Pin for temp sensor 
 dallas:
   pin: GPIO5
- 
+  update_interval: 30.0s
+  
 # Home Assistant domain for sensors
 sensor:
   - platform: dallas
     address: 0x4b80000027bdce28
     name: "Studio Temperature"
-    unit_of_measurement: F
+    id: temperature_c
+    unit_of_measurement: '°C'
+
+  - platform: template
+    name: "Temperature_F"
+    id: temperature_f
+    lambda: return id(temperature_c).state * 9/5+32;
+    update_interval: 30s

@@ -12,7 +12,35 @@ tts:
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-#device_tracker:
+
+# Shell Commands
+shell_command:
+  pushupdates_to_github: /bin/bash pushupdates.sh
+  trigger_garage_door: curl -A 'tesla/202' 'http://iot.buildingtheborg.com/TheMothership/Api/Sensor/SendAutomationCommand?guid=cf59af3a-24b8-400d-9ed2-beef8a2f14d8&pin=12716'
+
+# Proximity and Zones config
+
+proximity:
+  home_all:
+    devices:
+      - person.kary
+      - person.jenn
+    tolerance: 50
+    unit_of_measurement: mi
+
+  home_kary:
+    devices:
+      - person.kary
+    tolerance: 50
+    unit_of_measurement: mi
+
+  home_jennifer:
+    devices:
+      - person.jenn
+    tolerance: 50
+    unit_of_measurement: mi
+
+  #device_tracker:
 #  - platform: netgear
 #    host: 192.168.2.1
 #    port: 80
@@ -29,6 +57,3 @@ scene: !include scenes.yaml
 #      track_new_devices: true
 #    interval_seconds: 8
 #    consider_home: 240
- 
-shell_command:
-  pushupdates_to_github: /bin/bash pushupdates.sh

@@ -36,16 +36,16 @@
     device_id: 55909bcf92092e92af906cb9569db605
     entity_id: light.mb_room_kary
     domain: light
-    brightness_pct: 80
+    brightness_pct: 10
   - type: turn_on
     device_id: d98bf52e5929d96e7ebfe43422f79ceb
     entity_id: light.mb_room_jenn
     domain: light
-    brightness_pct: 80
+    brightness_pct: 10
   mode: single
 - id: '1681112266135'
   alias: Scheduled Backup
-  description: Backs up HA daily @ 5AM
+  description: Full backup daily @ 5AM
   trigger:
   - platform: time
     at: 05:00:00
@@ -54,4 +54,89 @@
   - service: hassio.backup_full
     data:
       compressed: true
+  mode: single
+- id: '1681162686311'
+  alias: Config Backup (github)
+  description: 'Backs up config only to GitHub. See: https://www.youtube.com/watch?v=hhv-WqGUy_o'
+  trigger:
+  - platform: time
+    at: '23:00:00'
+  condition: []
+  action:
+  - service: shell_command.pushupdates_to_github
+    data: {}
+  mode: single
+- id: '1681172168513'
+  alias: 'GeoFence: Kary Arrival'
+  description: Automates anything that needs to happen if I go somewhere.
+  trigger:
+  - platform: numeric_state
+    entity_id: proximity.home_kary
+    attribute: nearest
+    below: 1.2
+    id: approaching-home
+  condition:
+  - condition: state
+    entity_id: proximity.home_kary
+    attribute: dir_of_travel
+    state: towards
+  action:
+  - service: shell_command.trigger_garage_door
+    data: {}
+  - device_id: d35c55fdf0c65dc924d73235bcf2b1e6
+    domain: climate
+    entity_id: climate.third_floor_thermostat_nativezone
+    type: set_preset_mode
+    preset_mode: Home
+  mode: single
+- id: '1681176128676'
+  alias: 'GeoFence: Kary Departure'
+  description: Automates various items when I'm > 5 miles away.
+  trigger:
+  - platform: numeric_state
+    entity_id: proximity.home_kary
+    above: 5
+  condition: []
+  action:
+  - device_id: d35c55fdf0c65dc924d73235bcf2b1e6
+    domain: climate
+    entity_id: climate.third_floor_thermostat_nativezone
+    type: set_preset_mode
+    preset_mode: Away
+  mode: single
+- id: '1681176379895'
+  alias: Kary Wakeup
+  description: Bedroom lights come on dimly @ 2:30 AM
+  trigger:
+  - platform: time
+    at: 09:00:00
+  condition: []
+  action:
+  - type: turn_on
+    device_id: 55909bcf92092e92af906cb9569db605
+    entity_id: light.mb_room_kary
+    domain: light
+    brightness_pct: 100
+  - type: turn_on
+    device_id: d98bf52e5929d96e7ebfe43422f79ceb
+    entity_id: light.mb_room_jenn
+    domain: light
+    brightness_pct: 100
+  mode: single
+- id: '1681176443864'
+  alias: Jennifer Bedtime
+  description: Bedroom lights come on dimly @ 2:30 AM
+  trigger:
+  - platform: time
+    at: '18:30:00'
+  condition: []
+  action:
+  - type: turn_off
+    device_id: 55909bcf92092e92af906cb9569db605
+    entity_id: light.mb_room_kary
+    domain: light
+  - type: turn_off
+    device_id: d98bf52e5929d96e7ebfe43422f79ceb
+    entity_id: light.mb_room_jenn
+    domain: light
   mode: single
