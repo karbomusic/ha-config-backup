@@ -18,8 +18,18 @@ shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
   trigger_garage_door: curl -A 'tesla/202' 'http://iot.buildingtheborg.com/TheMothership/Api/Sensor/SendAutomationCommand?guid=cf59af3a-24b8-400d-9ed2-beef8a2f14d8&pin=12716'
 
-# Proximity and Zones config
+#Iframe Panels
+#panel_iframe:
+#
+#  moship:
+#    title: "The Mothership"
+#    url: "http://iot.buildingtheborg.com/themothership"
+#
+#  pihole:
+#    title: "Pi-Hole"
+#    url: "http://192.168.2.69/admin"
 
+# Proximity and Zones config
 proximity:
   home_all:
     devices:
@@ -39,6 +49,34 @@ proximity:
       - person.jenn
     tolerance: 50
     unit_of_measurement: mi
+
+# Sensors
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: memory_free
+      - type: memory_use_percent
+      - type: load_1m
+      - type: load_15m
+      - type: processor_use
+      - type: processor_temperature
+
+notify:
+  - platform: smtp
+    name: smtpmail
+    server: smtp.office365.com
+    port: 587
+    timeout: 15
+    sender: !secret notification_sender
+    starttls: true
+    username: !secret notification_username
+    password: !secret notification_password
+    recipient:
+      - !secret notification_recipient_kary
+    sender_name: Home Assistant
+    debug: true
 
   #device_tracker:
 #  - platform: netgear

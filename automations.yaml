@@ -32,16 +32,10 @@
     at: 02:30:00
   condition: []
   action:
-  - type: turn_on
-    device_id: 55909bcf92092e92af906cb9569db605
-    entity_id: light.mb_room_kary
-    domain: light
-    brightness_pct: 10
-  - type: turn_on
-    device_id: d98bf52e5929d96e7ebfe43422f79ceb
-    entity_id: light.mb_room_jenn
-    domain: light
-    brightness_pct: 10
+  - service: scene.turn_on
+    target:
+      entity_id: scene.master_bedroom_jenn_wakeup_scene
+    metadata: {}
   mode: single
 - id: '1681112266135'
   alias: Scheduled Backup
@@ -95,7 +89,7 @@
   trigger:
   - platform: numeric_state
     entity_id: proximity.home_kary
-    above: 5
+    above: 2
   condition: []
   action:
   - device_id: d35c55fdf0c65dc924d73235bcf2b1e6
@@ -103,6 +97,10 @@
     entity_id: climate.third_floor_thermostat_nativezone
     type: set_preset_mode
     preset_mode: Away
+  - type: turn_off
+    device_id: a729c76cf13a963a496450a6849a34da
+    entity_id: switch.mss110_f450_outlet1
+    domain: switch
   mode: single
 - id: '1681176379895'
   alias: Kary Wakeup
@@ -112,16 +110,15 @@
     at: 09:00:00
   condition: []
   action:
-  - type: turn_on
-    device_id: 55909bcf92092e92af906cb9569db605
-    entity_id: light.mb_room_kary
-    domain: light
-    brightness_pct: 100
-  - type: turn_on
-    device_id: d98bf52e5929d96e7ebfe43422f79ceb
-    entity_id: light.mb_room_jenn
-    domain: light
-    brightness_pct: 100
+  - service: scene.turn_on
+    target:
+      entity_id: scene.master_bedroom_daylight_scene
+    metadata: {}
+  - service: notify.smtpmail
+    data:
+      message: Test Email Notification
+      title: Test Email Notification
+      target: 7047705271@vtext.com
   mode: single
 - id: '1681176443864'
   alias: Jennifer Bedtime
@@ -139,4 +136,39 @@
     device_id: d98bf52e5929d96e7ebfe43422f79ceb
     entity_id: light.mb_room_jenn
     domain: light
+  mode: single
+- id: '1681230306765'
+  alias: 'Perimeter Alarm '
+  description: Fires when any perimeter alarm triggers.
+  trigger: []
+  condition: []
+  action: []
+  mode: single
+- id: '1681251459538'
+  alias: Rubber Tree Plant Light Automation
+  description: Turns rubber tree plant light on and off on a schedule.
+  trigger:
+  - platform: state
+    entity_id:
+    - schedule.rubber_tree_light_schedule
+    attribute: next_event
+  condition: []
+  action:
+  - type: toggle
+    device_id: 25f4eea66b13269d8c226d4571e2cf40
+    entity_id: switch.mss110_f6a8_outlet1
+    domain: switch
+  mode: single
+- id: '1681318225531'
+  alias: Email Notify Test
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: notify.smtpmail
+    data:
+      message: test6
+      target: 7047705271@vtext.com
+      title: asdf
+      data: sdfg
   mode: single
