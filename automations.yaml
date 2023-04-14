@@ -1,29 +1,3 @@
-- id: '1681088653338'
-  alias: My First Automation
-  description: Toggles front studio lights if still images is turned on/off on media
-    room camera.
-  trigger:
-  - platform: device
-    type: changed_states
-    device_id: 41972a7041c0c89c1c3dc56600bffd32
-    entity_id: switch.http_motionpi4_mediaroom_config_2_still_images
-    domain: switch
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-    enabled: true
-  condition: []
-  action:
-  - type: toggle
-    device_id: 0b29ee9b13cb102d5180d84f7c5d6cf2
-    entity_id: light.studio_front_left
-    domain: light
-  - type: toggle
-    device_id: 089eea60e5cd55992b9630b5826e97d6
-    entity_id: light.studio_front_right
-    domain: light
-  mode: single
 - id: '1681103237763'
   alias: Jennifer Weekday Wakeup
   description: Bedroom lights come on dimly @ 2:30 AM
@@ -67,7 +41,7 @@
   - platform: numeric_state
     entity_id: proximity.home_kary
     attribute: nearest
-    below: 1.2
+    below: 1
     id: approaching-home
   condition:
   - condition: state
@@ -89,7 +63,7 @@
   trigger:
   - platform: numeric_state
     entity_id: proximity.home_kary
-    above: 2
+    above: 1
   condition: []
   action:
   - device_id: d35c55fdf0c65dc924d73235bcf2b1e6
@@ -171,4 +145,144 @@
       target: 7047705271@vtext.com
       title: asdf
       data: sdfg
+  mode: single
+- id: '1681398116414'
+  alias: Big Room Motion
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: ba69097dbafc9cf0318ce29dc65d8819
+    entity_id: binary_sensor.esp_bigroom_motion_big_room_motion
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  condition: []
+  action:
+  - type: turn_on
+    device_id: ba69097dbafc9cf0318ce29dc65d8819
+    entity_id: light.esp_bigroom_motion_esp_bigroom_motion_led
+    domain: light
+    flash: long
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - type: turn_off
+    device_id: ba69097dbafc9cf0318ce29dc65d8819
+    entity_id: light.esp_bigroom_motion_esp_bigroom_motion_led
+    domain: light
+  mode: single
+- id: '1681407583262'
+  alias: Garage Door opened
+  description: The garage door has just been opened.
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 6c480a1cc454af02f2aa40e7a4c6b4fa
+    entity_id: binary_sensor.garage_door_alarm_window_door_is_open_2
+    domain: binary_sensor
+  condition: []
+  action:
+  - delay:
+      hours: 0
+      minutes: 8
+      seconds: 0
+      milliseconds: 0
+  - if:
+    - type: is_open
+      condition: device
+      device_id: 6c480a1cc454af02f2aa40e7a4c6b4fa
+      entity_id: binary_sensor.garage_door_alarm_window_door_is_open_2
+      domain: binary_sensor
+    then:
+    - device_id: 73a225063e981ddb1e941cf746eb6d5f
+      domain: mobile_app
+      type: notify
+      message: Garage Door Baby
+      title: Garage Door auto-closed.
+    - service: shell_command.trigger_garage_door
+      data: {}
+    else:
+    - stop: Door is already closed.
+    - service: shell_command.trigger_garage_door
+      data: {}
+  - service: shell_command.play_local_notification
+    data: {}
+    enabled: false
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.vlc_telnet
+    data:
+      media_content_id: media-source://media_source/local/garage-door-closed.mp3
+      media_content_type: audio/mpeg
+    metadata:
+      title: garage-door-closed.mp3
+      thumbnail:
+      media_class: music
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://media_source
+  mode: single
+- id: '1681433347838'
+  alias: Telnet Audio
+  description: Testing broadcasting audio messages to a remote pi.
+  trigger:
+  - type: motion
+    platform: device
+    device_id: ba69097dbafc9cf0318ce29dc65d8819
+    entity_id: binary_sensor.esp_bigroom_motion_big_room_motion
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  condition: []
+  action:
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.vlc_telnet_2
+    data:
+      media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+      media_content_type: provider
+    metadata:
+      title: Warning, potential intruder in front living room. Initiating kill shot
+        in 10 seconds!
+      thumbnail: https://brands.home-assistant.io/_/google_translate/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.vlc_telnet
+    data:
+      media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+      media_content_type: provider
+    metadata:
+      title: Warning, potential intruder in front living room. Initiating kill shot
+        in 10 seconds!
+      thumbnail: https://brands.home-assistant.io/_/google_translate/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
   mode: single

@@ -1,0 +1,82 @@
+esphome:
+  name: esphome-web-335258
+  friendly_name: esp-bigroom-motion
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "IifuDpauaBSrwGspLqElq3cgMAh7Q/+a4zPOOPF4xsg="
+
+ota:
+  password: "153f9d6bfc183b4d0ab8354cc0da625a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp-Bigroom-Motion"
+    password: "7QQeHn7wX3ah"
+
+captive_portal:
+    
+# Pin that turns on the LED
+output:
+  - platform: gpio
+    id: "esp_bigroom_motion_led"
+    pin: GPIO21
+    
+# Home Assistant domain for light
+light:
+  - platform: binary
+    output: "esp_bigroom_motion_led"
+    name: "ESP BigRoom Motion LED"
+
+# Pin for motion sensor 
+binary_sensor:
+  - platform: gpio
+    name: "Big Room Motion"
+    device_class: motion
+    pin:
+      number: 5
+#      inverted: true
+#      mode:
+#        input: true
+#        pullup: true
+
+# Domain for PIR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
