@@ -1,0 +1,10 @@
+# - platform: template
+#   sensors:
+#     unique_id: "estimated_energy_cost_total"
+#     name: "Energy Cost"
+#     unit_of_measurement: "USD"
+#     # device_class: energy
+#     # icon_template: mdi:cash
+#     state: >
+#       !input value_template: "{{ (states('input_text.energy_price_per_kwh')|float) * (states('sensor.home_energy')|float) }}"
+

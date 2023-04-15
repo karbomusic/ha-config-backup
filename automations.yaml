@@ -56,25 +56,36 @@
     entity_id: climate.third_floor_thermostat_nativezone
     type: set_preset_mode
     preset_mode: Home
+  - service: climate.set_temperature
+    data:
+      temperature: 72
+      hvac_mode: auto
+      target_temp_high: 72
+      target_temp_low: 70
+    target:
+      device_id: d35c55fdf0c65dc924d73235bcf2b1e6
   mode: single
 - id: '1681176128676'
   alias: 'GeoFence: Kary Departure'
   description: Automates various items when I'm > 5 miles away.
-  trigger:
-  - platform: numeric_state
-    entity_id: proximity.home_kary
-    above: 1
-  condition: []
+  trigger: []
+  condition:
+  - condition: device
+    device_id: 73a225063e981ddb1e941cf746eb6d5f
+    domain: device_tracker
+    entity_id: device_tracker.sm_s918u_karyphone
+    type: is_not_home
   action:
-  - device_id: d35c55fdf0c65dc924d73235bcf2b1e6
-    domain: climate
-    entity_id: climate.third_floor_thermostat_nativezone
-    type: set_preset_mode
-    preset_mode: Away
   - type: turn_off
     device_id: a729c76cf13a963a496450a6849a34da
     entity_id: switch.mss110_f450_outlet1
     domain: switch
+  - service: climate.set_temperature
+    data:
+      hvac_mode: auto
+      temperature: 72
+    target:
+      entity_id: climate.third_floor_thermostat_nativezone
   mode: single
 - id: '1681176379895'
   alias: Kary Wakeup
@@ -280,9 +291,64 @@
         media_content_id: media-source://tts
       - media_content_type: provider
         media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.vlc_telnet_3
+    data:
+      media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
+      media_content_type: provider
+    metadata:
+      title: Warning, potential intruder in front living room. Initiating kill shot
+        in 10 seconds!
+      thumbnail: https://brands.home-assistant.io/_/google_translate/logo.png
+      media_class: app
+      children_media_class:
+      navigateIds:
+      - {}
+      - media_content_type: app
+        media_content_id: media-source://tts
+      - media_content_type: provider
+        media_content_id: media-source://tts/google_translate?message=Warning%2C+potential+intruder+in+front+living+room.+Initiating+kill+shot+in+10+seconds%21
   - delay:
       hours: 0
       minutes: 1
       seconds: 0
       milliseconds: 0
+  mode: single
+- id: '1681481570844'
+  alias: BStation Volume Warning
+  description: Notify if the status of Volume 1 is not "normal"
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.bstation_volume_1_status
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  condition: []
+  action:
+  - service: notify.smtpmail
+    data:
+      message: BStation Volume 1 Status has changed to {{ states("sensor.bstation_volume_1_status")
+        }}. Please check Home Assistant.
+  - service: notify.mobile_app_sm_s918u_karyphone
+    data:
+      message: 'BStation Volume 1 status has changed to {{ states("sensor.bstation_volume_1_status")
+        }}. Please check Home Assistant.  '
+      title: BStation Volume 1 Status Change
+      data:
+        channel: Motion
+        sticky: 'true'
+        importance: high
+  - delay:
+      hours: 1
+      minutes: 0
+      seconds: 0
+      milliseconds: 0
+  - service: notify.smtpmail
+    data:
+      message: BStation volume status has changed from normal. Please check BStation.
+      title: BStation Warning
+      target: 7047705271@vtext.com
   mode: single

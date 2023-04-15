@@ -12,6 +12,7 @@ tts:
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+#sensor: !include sensors.yaml
 
 # Shell Commands
 shell_command:
@@ -19,16 +20,30 @@ shell_command:
   trigger_garage_door: curl -A 'HA-Shell' 'http://192.168.2.88/772c3a64-7628-4c61-825c-39293d2ea94f'
   play_local_notification: "ffplay -nodisp -vn /config/audio/garage-door-closed.wav"
 
-#Iframe Panels
-#panel_iframe:
-#
-#  moship:
-#    title: "The Mothership"
-#    url: "http://iot.buildingtheborg.com/themothership"
-#
-#  pihole:
-#    title: "Pi-Hole"
-#    url: "http://192.168.2.69/admin"
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: memory_free
+      - type: memory_use_percent
+      - type: load_1m
+      - type: load_15m
+      - type: processor_use
+      - type: processor_temperature
+
+template:
+  - sensor:
+      - name: Energy Cost
+        unique_id: "energy_cost"
+        state: >
+          "{{ (states('input_text.energy_price_per_kwh')|float) * (states('sensor.home_energy')|float) }}"
+
+  - sensor:
+      - name: Power Sum
+        unique_id: "power_sum"
+        state: >
+          {{ states.sensor | selectattr('entity_id', 'search', '_power$') | map(attribute='state') | map('float', 0) | sum }}
 
 # Proximity and Zones config
 proximity:
@@ -41,6 +56,7 @@ proximity:
     unit_of_measurement: mi
 
   home_kary:
+    zone: zone.home
     devices:
       - person.kary
       - proximity.home_kary
@@ -52,19 +68,6 @@ proximity:
       - person.jenn
     tolerance: 50
     unit_of_measurement: mi
-
-# Sensors
-sensor:
-  - platform: systemmonitor
-    resources:
-      - type: disk_use_percent
-        arg: /config
-      - type: memory_free
-      - type: memory_use_percent
-      - type: load_1m
-      - type: load_15m
-      - type: processor_use
-      - type: processor_temperature
 
 # SMTP Email
 notify:
@@ -96,21 +99,21 @@ alarm_control_panel:
       arming_time: 0
       delay_time: 0
 
-      # Motion Sensors
-  #device_tracker:
-#  - platform: netgear
-#    host: 192.168.2.1
-#    port: 80
-#    username: admin
-#    password: Che$ter120120120
-#    accesspoints:
-#      - 94:A6:7E:77:D2:DB # Router
-#      - 94:A6:7E:76:40:9C # Satellite_Studio
-#      - 94:A6:7E:76:3E:E4 # Sattelite_2ndFloor
-#    devices:
-#      - 5E:F9:CF:66:46:F7 # kary phone
-#      - 0A:5D:DA:85:C8:27 # jenn phone
-#    new_device_defaults:
-#      track_new_devices: true
-#    interval_seconds: 8
-#    consider_home: 240
+  # Device Tracing for router
+# device_tracker:
+#   - platform: netgear
+#     host: 192.168.2.1
+#     port: 80
+#     username: admin
+#     password: Che$ter120120120
+#     accesspoints:
+#       - 94:A6:7E:77:D2:DB # Router
+#       - 94:A6:7E:76:40:9C # Satellite_Studio
+#       - 94:A6:7E:76:3E:E4 # Sattelite_2ndFloor
+#     devices:
+#       - 5E:F9:CF:66:46:F7 # kary phone
+#       - 0A:5D:DA:85:C8:27 # jenn phone
+#     new_device_defaults:
+#       track_new_devices: true
+#     interval_seconds: 8
+#     consider_home: 240

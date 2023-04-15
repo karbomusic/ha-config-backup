@@ -1,0 +1,54 @@
+esphome:
+  name: esphome-web-fe6eb8
+  friendly_name: esp-lab-motion
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "uXK816Tif7oqFqdTtskwrrlSzslaY+TmV/ZF3p4xYGM="
+
+ota:
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-Web-Fe6Eb8"
+    password: "Mw3FGh5iHIVu"
+
+captive_portal:
+
+# Pin that turns on the LED
+output:
+  - platform: gpio
+    id: "esp_lab_motion_led"
+    pin: GPIO21
+    
+# Home Assistant domain for light
+light:
+  - platform: binary
+    output: "esp_lab_motion_led"
+    name: "ESP Lab Motion LED"
+
+# Pin for motion sensor 
+binary_sensor:
+  - platform: gpio
+    name: "Lab Motion"
+    device_class: motion
+    pin:
+      number: 5
+#      inverted: true
+#      mode:
+#        input: true
+#        pullup: true
